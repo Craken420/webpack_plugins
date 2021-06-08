@@ -1,5 +1,7 @@
 const path = require('path');
 
+const HtmlWebpack = require('html-webpack-plugin');
+
 const webpackConfig = {
     entry: './src/index.js',
     output: {
@@ -48,7 +50,13 @@ const webpackConfig = {
                 }]
             }
         ]
-    }
+    },
+    plugins: [
+        new HtmlWebpack({
+            filename: 'index.html',
+            template: 'src/index.html'
+        })
+    ]
 };
 
 module.exports = webpackConfig;

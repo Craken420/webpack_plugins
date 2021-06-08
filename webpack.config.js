@@ -22,7 +22,7 @@ const webpackConfig = {
     mode: env == 'production' || env == 'none' ? env : 'development',
     output: {
         path: path.resolve(__dirname + '/dist/assets'),
-        filename: env == 'production' ? 'bundle.min.js' : 'bundle.js',
+        filename: env == 'production' ? '[name]-[contenthash].js' : '[name]-[contenthash].js',
         clean: true
     },
     module: {
@@ -85,7 +85,7 @@ const webpackConfig = {
                     loader: 'file-loader',
                     options: {
                         limit: 10 * 1024, // Images larger than 10 KB won’t be inlined
-                        name: '[hash].[name].[ext]',
+                        name: '[name]-[hash].[ext]',
                         outputPath: 'images',
                         publicPath: this.outputPath
                     }
@@ -100,7 +100,7 @@ const webpackConfig = {
                         // Remove quotes around the encoded URL –
                         // they’re rarely useful
                         noquotes: true,
-                        name: '[hash].[name].[ext]',
+                        name: '[name]-[hash].[ext]',
                         outputPath: 'images',
                         publicPath: this.outputPath
                     }
@@ -124,8 +124,9 @@ const webpackConfig = {
                 : false,
         }),
         new MiniCssExtract({
-            filename: env == 'production' ? '[name].min.css' : '[name].css',
-            chunkFilename: '[id].css'
+            filename: env == 'production'
+                ? '/css/[name]-[contenthash].min.css'
+                : '/css/[name]-[contenthash].css'
         }),
         new ImageminPlugin({
             disable: false, // Deshabilitar en modo dev

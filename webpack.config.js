@@ -1,6 +1,9 @@
 const path = require('path');
 const glob = require('glob');
 
+const HelloWorld = require('./src/js/plugins/HelloWorld');
+const CustomManifestPlugin = require('./src/js/plugins/WebpackCustomManifestPlugin');
+    
 const HtmlWebpack = require('html-webpack-plugin');
 const MiniCssExtract =
     require('mini-css-extract-plugin'); // extraer css en su propio archivo
@@ -18,11 +21,14 @@ const PurgeCssPlugin = require('purgecss-webpack-plugin');
 const env = process.env.NODE_ENV;
 
 const webpackConfig = {
-    entry: './src/index.js',
+    // entry: './src/index.js',
+    entry: {
+        app: [path.resolve(__dirname + '/src/js/index.js'), path.resolve(__dirname + '/src/scss/app.scss')]
+    },
     mode: env == 'production' || env == 'none' ? env : 'development',
     output: {
-        path: path.resolve(__dirname + '/dist/assets'),
-        filename: env == 'production' ? '[name]-[contenthash].js' : '[name]-[contenthash].js',
+        path: path.resolve(__dirname + '/dist'),
+        filename: env == 'production' ? 'assets/js/[name]-[contenthash].js' : 'assets/js/[name]-[contenthash].js',
         clean: true
     },
     module: {
@@ -86,7 +92,7 @@ const webpackConfig = {
                     options: {
                         limit: 10 * 1024, // Images larger than 10 KB won’t be inlined
                         name: '[name]-[hash].[ext]',
-                        outputPath: 'images',
+                        outputPath: 'assets/images',
                         publicPath: this.outputPath
                     }
                 }]
@@ -101,7 +107,7 @@ const webpackConfig = {
                         // they’re rarely useful
                         noquotes: true,
                         name: '[name]-[hash].[ext]',
-                        outputPath: 'images',
+                        outputPath: 'assets/images',
                         publicPath: this.outputPath
                     }
                 }]
@@ -110,7 +116,7 @@ const webpackConfig = {
     },
     plugins: [
         new HtmlWebpack({
-            filename: '../index.html',
+            filename: 'index.html',
             template: 'src/index.html',
             minify: env === 'production'
                 ? {
@@ -125,15 +131,22 @@ const webpackConfig = {
         }),
         new MiniCssExtract({
             filename: env == 'production'
-                ? '/css/[name]-[contenthash].min.css'
-                : '/css/[name]-[contenthash].css'
+                ? 'assets/css/[name]-[contenthash].min.css'
+                : 'assets/css/[name]-[contenthash].css'
         }),
         new ImageminPlugin({
-            disable: false, // Deshabilitar en modo dev
             pngquant: {
                 quality: [0.3, 0.5] // usar la menor cantidad de colores necesarios
                     // para alcanzar o superar la calidad máxima
             },
+            test: /\.(jpe?g|png|gif|svg)$/i,
+ 	        disable: env == 'production'
+        }),
+        new HelloWorld({
+            message: 'Badge "webpack bundler bender" unlocked!'
+        }),
+        new CustomManifestPlugin({
+            outputPath: path.resolve(__dirname + '/')
         })
     ],
     optimization: {

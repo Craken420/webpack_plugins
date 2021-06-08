@@ -1,4 +1,5 @@
 const path = require('path');
+const glob = require('glob');
 
 const HtmlWebpack = require('html-webpack-plugin');
 const MiniCssExtract =
@@ -11,6 +12,9 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin'); // minimizar
 
 const ImageminPlugin = require('imagemin-webpack-plugin').default // minizar imagenes
 
+const PurgeCssPlugin = require('purgecss-webpack-plugin');
+
+    // elimina selectores CSS no utilizados de los archivos CSS.
 const env = process.env.NODE_ENV;
 
 const webpackConfig = {
@@ -31,12 +35,49 @@ const webpackConfig = {
             {
                 test: /\.css$/i,
                 exclude: /node_modules/,
-                use: [MiniCssExtract.loader, 'css-loader']
+                use: [
+                    MiniCssExtract.loader,
+                    'css-loader',
+                    {
+                        loader: 'postcss-loader', // procesar CSS con PostCSS.
+                        options: {
+                            postcssOptions: {
+                                plugins: function() {
+                                    return [
+                                        require('precss'),  // permite usar marcado tipo Sass
+                                                            // y funciones CSS por etapas en CSS.
+                                        require('autoprefixer') // Complemento PostCSS para analizar CSS
+                                            // y agregar prefijos de vendor a las reglas de CSS.
+                                    ]; 
+                                }
+                            }
+                        }
+                    },
+                ]
             },
             {
                 test: /\.scss$/i,
                 exclude: /node_modules/,
-                use: [MiniCssExtract.loader, 'css-loader', 'sass-loader']
+                use: [
+                    MiniCssExtract.loader,
+                    'css-loader',
+                    {
+                        loader: 'postcss-loader', // procesar CSS con PostCSS.
+                        options: {
+                            postcssOptions: {
+                                plugins: function() {
+                                    return [
+                                        require('precss'),  // permite usar marcado tipo Sass
+                                                            // y funciones CSS por etapas en CSS.
+                                        require('autoprefixer') // Complemento PostCSS para analizar CSS
+                                            // y agregar prefijos de vendor a las reglas de CSS.
+                                    ]; 
+                                }
+                            }
+                        }
+                    },
+                    'sass-loader'
+                ]
             },
             {
                 test: /\.(jpe?g|png|gif)$/i,
@@ -112,7 +153,7 @@ if (env == 'production') {
 
                 const minifiedCss = csso.minify(input, {
                     filename: filename,
-                    sourceMap: true,
+                    sourceMap: true
                 });
                 if (inputMap) {
                     minifiedCss.map.applySourceMap(
@@ -126,7 +167,7 @@ if (env == 'production') {
                 // })
                 return {
                     code: minifiedCss.css,
-                    map: minifiedCss.map.toJSON(),
+                    map: minifiedCss.map.toJSON()
                 };
             },
             minimizerOptions: {
@@ -134,9 +175,12 @@ if (env == 'production') {
                   'default',
                   {
                     discardComments: { removeAll: true }, // Eliminar comentarios
-                  },
-                ],
-            },
+                  }
+                ]
+            }
+        }),
+        new PurgeCssPlugin({
+            paths: glob.sync(path.join(__dirname, 'src') + '/**/*', { nodir: true})
         })
     ])
 }

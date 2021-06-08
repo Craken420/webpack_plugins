@@ -1,5 +1,6 @@
 import './style.css';
 import './styleSCSS.scss';
+import './scss/app.scss';
 import RandomStringGenerator from './utilities/random';
 import copyToClipboard from './utilities/copyToClipboard'
 

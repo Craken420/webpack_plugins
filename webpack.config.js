@@ -1,6 +1,8 @@
 const path = require('path');
 
 const HtmlWebpack = require('html-webpack-plugin');
+const MiniCssExtract =
+    require('mini-css-extract-plugin'); // extraer css en su propio archivo
 
 const webpackConfig = {
     entry: './src/index.js',
@@ -19,12 +21,12 @@ const webpackConfig = {
             {
                 test: /\.css$/i,
                 exclude: /node_modules/,
-                use: ['style-loader', 'css-loader']
+                use: [MiniCssExtract.loader, 'css-loader']
             },
             {
                 test: /\.scss$/i,
                 exclude: /node_modules/,
-                use: ['style-loader', 'css-loader', 'sass-loader']
+                use: [MiniCssExtract.loader, 'css-loader', 'sass-loader']
             },
             {
                 test: /\.(jpe?g|png|gif)$/i,
@@ -55,6 +57,10 @@ const webpackConfig = {
         new HtmlWebpack({
             filename: 'index.html',
             template: 'src/index.html'
+        }),
+        new MiniCssExtract({
+            filename: '[name].css',
+            chunkFilename: '[id].css'
         })
     ]
 };

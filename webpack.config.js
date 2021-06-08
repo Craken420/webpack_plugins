@@ -6,6 +6,8 @@ const MiniCssExtract =
 
 const TerserPlugin = require('terser-webpack-plugin'); // minimizar el JS generado
     // versiones anteriores: uglifyjs-webpack-plugin
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin'); // minimizar el CSS generado
+    // versiones anteriores: optimize-css-assets-webpack-plugin
 
 const env = process.env.NODE_ENV;
 
@@ -82,7 +84,47 @@ const sendOptimization = function (plugins) {
 
 // Load this plugin only when running webpack in a production environment
 if (env == 'production') {
-    sendOptimization([new TerserPlugin()])
+    sendOptimization([
+        new TerserPlugin(),
+        new CssMinimizerPlugin({
+            exclude: /node_modules/,
+            // minify: CssMinimizerPlugin.cleanCssMinify, // Limpiar
+            // minify: CssMinimizerPlugin.cssoMinify, // Tipo de minificación
+            // minify: CssMinimizerPlugin.cssnano // // Tipo de minificación default
+            minify: async (data, inputMap) => {
+                const csso = require('csso');
+                const sourcemap = require('source-map');
+                const [[filename, input]] = Object.entries(data);
+
+                const minifiedCss = csso.minify(input, {
+                    filename: filename,
+                    sourceMap: true,
+                });
+                if (inputMap) {
+                    minifiedCss.map.applySourceMap(
+                        new sourcemap.SourceMapConsumer(inputMap),
+                        filename
+                    );
+                }
+                // console.log({
+                //     code: minifiedCss.css,
+                //     map: minifiedCss.map.toJSON(),
+                // })
+                return {
+                    code: minifiedCss.css,
+                    map: minifiedCss.map.toJSON(),
+                };
+            },
+            minimizerOptions: {
+                preset: [
+                  'default',
+                  {
+                    discardComments: { removeAll: true }, // Eliminar comentarios
+                  },
+                ],
+            },
+        })
+    ])
 }
 
 module.exports = webpackConfig;

@@ -9,6 +9,8 @@ const TerserPlugin = require('terser-webpack-plugin'); // minimizar el JS genera
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin'); // minimizar el CSS generado
     // versiones anteriores: optimize-css-assets-webpack-plugin
 
+const ImageminPlugin = require('imagemin-webpack-plugin').default // minizar imagenes
+
 const env = process.env.NODE_ENV;
 
 const webpackConfig = {
@@ -74,6 +76,13 @@ const webpackConfig = {
         new MiniCssExtract({
             filename: env == 'production' ? '[name].min.css' : '[name].css',
             chunkFilename: '[id].css'
+        }),
+        new ImageminPlugin({
+            disable: false, // Deshabilitar en modo dev
+            pngquant: {
+                quality: [0.3, 0.5] // usar la menor cantidad de colores necesarios
+                    // para alcanzar o superar la calidad máxima
+            },
         })
     ],
     optimization: {

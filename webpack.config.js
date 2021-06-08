@@ -20,6 +20,11 @@ const webpackConfig = {
                 use: ['style-loader', 'css-loader']
             },
             {
+                test: /\.scss$/i,
+                exclude: /node_modules/,
+                use: ['style-loader', 'css-loader', 'sass-loader']
+            },
+            {
                 test: /\.(jpe?g|png|gif)$/i,
                 use: [{
                     loader: 'url-loader',

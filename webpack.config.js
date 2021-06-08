@@ -15,7 +15,7 @@ const webpackConfig = {
     entry: './src/index.js',
     mode: env == 'production' || env == 'none' ? env : 'development',
     output: {
-        path: path.resolve(__dirname + '/dist'),
+        path: path.resolve(__dirname + '/dist/assets'),
         filename: env == 'production' ? 'bundle.min.js' : 'bundle.js',
         clean: true
     },
@@ -39,11 +39,12 @@ const webpackConfig = {
             {
                 test: /\.(jpe?g|png|gif)$/i,
                 use: [{
-                    loader: 'url-loader',
+                    loader: 'file-loader',
                     options: {
                         limit: 10 * 1024, // Images larger than 10 KB won’t be inlined
-                        filename: 'images/[hash]-[name].[ext]',
-                        publicPath: 'assets'
+                        name: '[hash].[name].[ext]',
+                        outputPath: 'images',
+                        publicPath: this.outputPath
                     }
                 }]
             },
@@ -55,7 +56,10 @@ const webpackConfig = {
                         limit: 10 * 1024, // Images larger than 10 KB won’t be inlined
                         // Remove quotes around the encoded URL –
                         // they’re rarely useful
-                        noquotes: true
+                        noquotes: true,
+                        name: '[hash].[name].[ext]',
+                        outputPath: 'images',
+                        publicPath: this.outputPath
                     }
                 }]
             }
@@ -63,12 +67,12 @@ const webpackConfig = {
     },
     plugins: [
         new HtmlWebpack({
-            filename: 'index.html',
+            filename: '../index.html',
             template: 'src/index.html',
 
         }),
         new MiniCssExtract({
-            filename: '[name].css',
+            filename: env == 'production' ? '[name].min.css' : '[name].css',
             chunkFilename: '[id].css'
         })
     ],

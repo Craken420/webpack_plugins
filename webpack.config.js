@@ -4,6 +4,9 @@ const HtmlWebpack = require('html-webpack-plugin');
 const MiniCssExtract =
     require('mini-css-extract-plugin'); // extraer css en su propio archivo
 
+const TerserPlugin = require('terser-webpack-plugin'); // minimizar el JS generado
+    // versiones anteriores: uglifyjs-webpack-plugin
+
 const env = process.env.NODE_ENV;
 
 const webpackConfig = {
@@ -11,7 +14,7 @@ const webpackConfig = {
     mode: env == 'production' || env == 'none' ? env : 'development',
     output: {
         path: path.resolve(__dirname + '/dist'),
-        filename: 'bundle.js',
+        filename: env == 'production' ? 'bundle.min.js' : 'bundle.js',
         clean: true
     },
     module: {
@@ -65,7 +68,21 @@ const webpackConfig = {
             filename: '[name].css',
             chunkFilename: '[id].css'
         })
-    ]
+    ],
+    optimization: {
+        minimizer: []
+    }
 };
+
+const sendOptimization = function (plugins) {
+    plugins.forEach( function(plugin) {
+        webpackConfig.optimization.minimizer.push(plugin)
+    })
+}
+
+// Load this plugin only when running webpack in a production environment
+if (env == 'production') {
+    sendOptimization([new TerserPlugin()])
+}
 
 module.exports = webpackConfig;

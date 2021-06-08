@@ -1,0 +1,19 @@
+.main {
+    padding: 30px;
+    background-color: blueviolet;
+}
+
+/* File: ./src/style.scss */
+.text-center {
+    text-align: center;
+}
+
+#password_icon,
+#copy_icon {
+    width: 20px;
+}
+
+#random_password {
+    display: inline-block;
+    margin: 0 10px;
+}

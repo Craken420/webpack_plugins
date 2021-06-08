@@ -112,7 +112,16 @@ const webpackConfig = {
         new HtmlWebpack({
             filename: '../index.html',
             template: 'src/index.html',
-
+            minify: env === 'production'
+                ? {
+                    collapseWhitespace: true,
+                    removeComments: true,
+                    removeRedundantAttributes: true,
+                    removeScriptTypeAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    useShortDoctype: true
+                }
+                : false,
         }),
         new MiniCssExtract({
             filename: env == 'production' ? '[name].min.css' : '[name].css',

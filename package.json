@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "webpack"
+    "build": "SET NODE_ENV=development&& webpack",
+    "prod": "SET NODE_ENV=production&& webpack"
   },
   "keywords": [],
   "author": "Luis Angel Peña Zuñiga",

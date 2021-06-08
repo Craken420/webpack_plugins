@@ -4,8 +4,11 @@ const HtmlWebpack = require('html-webpack-plugin');
 const MiniCssExtract =
     require('mini-css-extract-plugin'); // extraer css en su propio archivo
 
+const env = process.env.NODE_ENV;
+
 const webpackConfig = {
     entry: './src/index.js',
+    mode: env == 'production' || env == 'none' ? env : 'development',
     output: {
         path: path.resolve(__dirname + '/dist'),
         filename: 'bundle.js',

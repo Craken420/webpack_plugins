@@ -17,6 +17,8 @@ const ImageminPlugin = require('imagemin-webpack-plugin').default // minizar ima
 
 const PurgeCssPlugin = require('purgecss-webpack-plugin');
 
+const CopyPlugin = require('copy-webpack-plugin');
+
     // elimina selectores CSS no utilizados de los archivos CSS.
 const env = process.env.NODE_ENV;
 
@@ -147,7 +149,12 @@ const webpackConfig = {
         }),
         new CustomManifestPlugin({
             outputPath: path.resolve(__dirname + '/')
-        })
+        }),
+        new CopyPlugin({
+            patterns: [
+                { from: 'src/js/vendors/jquery.min.js', to: 'assets/js/vendors/jquery.min.js' },
+            ]
+        }),
     ],
     optimization: {
         minimizer: []

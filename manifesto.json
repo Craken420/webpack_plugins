@@ -4,6 +4,10 @@
         "size": "22 KB"
     },
     {
+        "name": "assets/js/vendors/jquery.min.js",
+        "size": "0 KB"
+    },
+    {
         "name": "index.html",
         "size": "1 KB"
     },

@@ -23,7 +23,7 @@ const env = process.env.NODE_ENV;
 const webpackConfig = {
     // entry: './src/index.js',
     entry: {
-        app: [path.resolve(__dirname + '/src/js/index.js'), path.resolve(__dirname + '/src/scss/app.scss')]
+        app: ['@babel/polyfill', path.resolve(__dirname + '/src/js/index.js'), path.resolve(__dirname + '/src/scss/app.scss')]
     },
     mode: env == 'production' || env == 'none' ? env : 'development',
     output: {

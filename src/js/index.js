@@ -1,3 +1,4 @@
+import printMe from './utilities/print';
 import '../css/style.css';
 import '../scss/styleSCSS.scss';
 import '../scss/app.scss';
@@ -28,3 +29,5 @@ document.addEventListener('DOMContentLoaded', () => {
 const add = (x, y) => x+y;
 
 console.log('add: ', add(1, 5))
+
+printMe();

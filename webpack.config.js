@@ -21,16 +21,29 @@ const CopyPlugin = require('copy-webpack-plugin');
 
     // elimina selectores CSS no utilizados de los archivos CSS.
 const env = process.env.NODE_ENV;
-
+const utilities = 'assets/js/utilities/[name]-[contenthash]';
+const envFileName = env == 'production' ? utilities + '.min.js' :  utilities + '.js'
 const webpackConfig = {
-    // entry: './src/index.js',
     entry: {
-        app: ['@babel/polyfill', path.resolve(__dirname + '/src/js/index.js'), path.resolve(__dirname + '/src/scss/app.scss')]
+        app: ['@babel/polyfill', './src/js/index.js', './src/css/style.css'],
+        random: {
+            import: ['@babel/polyfill/noConflict', './src/js/utilities/random.js'],
+            filename: envFileName
+        },
+        copyToClipboard: {
+            import: ['@babel/polyfill/noConflict', './src/js/utilities/copyToClipboard.js'],
+            filename: envFileName
+        },
+        print: {
+            import: ['@babel/polyfill/noConflict', './src/js/utilities/print.js'],
+            filename: envFileName
+        }
     },
     mode: env == 'production' || env == 'none' ? env : 'development',
     output: {
-        path: path.resolve(__dirname + '/dist'),
-        filename: env == 'production' ? 'assets/js/[name]-[contenthash].js' : 'assets/js/[name]-[contenthash].js',
+        path: path.resolve(__dirname, 'dist'),
+        // filename: env == 'production' ? 'assets/js/[name]-[contenthash].min.js' : 'assets/js/[name]-[contenthash].js',
+        filename: 'assets/js/[name]-[contenthash].js',
         clean: true
     },
     module: {
@@ -159,7 +172,7 @@ const webpackConfig = {
     optimization: {
         minimizer: []
     }
-};
+}
 
 const sendOptimization = function (plugins) {
     plugins.forEach( function(plugin) {
